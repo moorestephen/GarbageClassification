@@ -1,0 +1,2 @@
+Device: cuda
+Accuracy of the network on the test images: 62.41258741258741 %
