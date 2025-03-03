@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-from Model.FusionModel import FusionModel
+from Model.GarbageModel import GarbageModel
 from Datasets.Dataset import GarbageDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Set device; check if GPU is available
@@ -41,10 +41,10 @@ test_loader = DataLoader(test_dataset, batch_size = batch_size, shuffle = True, 
 
 PATH = './garbage_net.pth'
 
-model = FusionModel(
-    num_classes = 4,
-    image_input_shape = (3,224,224), 
-    transfer = False)
+model = GarbageModel(
+    num_classes = 4
+)
+model.to(device)
 model.load_state_dict(torch.load(PATH, map_location=torch.device('cpu')))  # Load weights
 model.eval()  # Set model to evaluation mode
 
@@ -57,8 +57,8 @@ predictions = []
 # since we're not training, we don't need to calculate the gradients for our outputs
 with torch.no_grad():
     for data in test_loader:
-        inputs, labels = data['image'], data['label']
-        input_ids, attention_mask = data['input_ids'], data['attention_mask']
+        inputs, labels = data['image'].to(device), data['label'].to(device)
+        input_ids, attention_mask = data['input_ids'].to(device), data['attention_mask'].to(device)
 
         outputs = model(inputs, input_ids, attention_mask)
 

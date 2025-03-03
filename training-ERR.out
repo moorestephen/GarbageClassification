@@ -1,5 +1,2 @@
-
-Traceback (most recent call last):
-  File "/home/stephen.moore/GarbageClassification/testing.py", line 10, in <module>
-    from sklearn.metrics import confusion_matrix
-ModuleNotFoundError: No module named 'sklearn'
+/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/torch/nn/modules/conv.py:456: UserWarning: Applied workaround for CuDNN issue, install nvrtc.so (Triggered internally at /opt/conda/conda-bld/pytorch_1702400440653/work/aten/src/ATen/native/cudnn/Conv_v8.cpp:80.)
+  return F.conv2d(input, weight, bias, self.stride,

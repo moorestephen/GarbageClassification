@@ -1,17 +1,2 @@
-/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=None`.
-  warnings.warn(msg)
-Traceback (most recent call last):
-  File "/home/stephen.moore/GarbageClassification/testing.py", line 75, in <module>
-    cm = confusion_matrix(labels, predictions)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 216, in wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/sklearn/metrics/_classification.py", line 340, in confusion_matrix
-    y_type, y_true, y_pred = _check_targets(y_true, y_pred)
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/sklearn/metrics/_classification.py", line 98, in _check_targets
-    check_consistent_length(y_true, y_pred)
-  File "/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/sklearn/utils/validation.py", line 475, in check_consistent_length
-    raise ValueError(
-ValueError: Found input variables with inconsistent numbers of samples: [8, 3432]
+/home/stephen.moore/anaconda3/envs/mdsc508_dev/lib/python3.11/site-packages/torch/nn/modules/conv.py:456: UserWarning: Applied workaround for CuDNN issue, install nvrtc.so (Triggered internally at /opt/conda/conda-bld/pytorch_1702400440653/work/aten/src/ATen/native/cudnn/Conv_v8.cpp:80.)
+  return F.conv2d(input, weight, bias, self.stride,

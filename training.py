@@ -6,8 +6,8 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import ExponentialLR
 from transformers import DistilBertTokenizer
 
-from Model.FusionModel import FusionModel
 from Datasets.Dataset import GarbageDataset
+from Model.GarbageModel import GarbageModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Set device; check if GPU is available
 
@@ -57,57 +57,71 @@ print(f"Train set: {len(trainloader)*batch_size}", flush = True)
 print(f"Val set: {len(valloader)*batch_size}", flush = True)
 print(f"Test set: {len(testloader)*batch_size}", flush = True)
 
-# Define model, loss function, optimizer, and scheduler
-model = FusionModel(
-    num_classes = 4,
-    image_input_shape = (3,224,224), 
-    transfer = True)
+model = GarbageModel(
+    num_classes = 4
+)
 model.to(device)
 
 criterion = nn.CrossEntropyLoss() # Loss function
-optimizer = torch.optim.AdamW(model.parameters(), lr = 0.001)
+optimizer = torch.optim.AdamW(model.parameters(), lr = 2e-5)
 scheduler = ExponentialLR(optimizer, gamma=0.9)
 
-nepochs = 20
+nepochs = 30
 PATH = './garbage_net.pth'
 
 best_lost = 1e+20
 
+print()
+
 for epoch in range(nepochs):
+    print(f"Epoch: {epoch+1}", flush = True)
+    print('-'*10, flush = True)
     # Training Loop
     model.train()
     running_loss = 0.0
+    running_correct = 0
+    running_num_total = 0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data['image'].to(device), data['label'].to(device)
         input_ids, attention_mask = data['input_ids'].to(device), data['attention_mask'].to(device)
         
         optimizer.zero_grad()
         outputs = model(inputs, input_ids, attention_mask)
+        _, preds = torch.max(outputs, 1)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
         
         running_loss += loss.item()
+        running_correct += torch.sum(preds == labels.data)
+        running_num_total += len(labels)
         
-    print(f"Epoch {epoch+1}, loss: {running_loss/len(trainloader)}", flush = True)
+    print(f"Training loss: {running_loss / len(trainloader)}; Acc: {running_correct / running_num_total}", flush = True)
     
     # Validation Loop
     model.eval()
     val_loss = 0.0
+    running_correct = 0
+    running_num_total = 0
     with torch.no_grad():
         for i, data in enumerate(valloader, 0):
             inputs, labels = data['image'].to(device), data['label'].to(device)
             input_ids, attention_mask = data['input_ids'].to(device), data['attention_mask'].to(device)
             
             outputs = model(inputs, input_ids, attention_mask)
+            _, preds = torch.max(outputs, 1)
             loss = criterion(outputs, labels)
             
             val_loss += loss.item()
+            running_correct += torch.sum(preds == labels.data)
+            running_num_total += len(labels)
             
-    print(f"Validation loss: {val_loss/len(valloader)}", flush = True)
+    print(f"Validation loss: {val_loss / len(valloader)}; Acc: {running_correct / running_num_total}", flush = True)
     
     if val_loss < best_lost:
         best_lost = val_loss
         torch.save(model.state_dict(), PATH)
+
+    print()
 
 print('Finished Training', flush = True)
